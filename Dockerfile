@@ -1,3 +1,3 @@
-FROM jazzdd86/alpine-flask
+FROM jazzdd/alpine-flask
 
 COPY . /app
