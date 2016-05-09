@@ -1,0 +1,11 @@
+sudo: required
+
+language: python
+
+services:
+  - docker
+
+before_install:
+- docker pull lalu/flask-demo-app
+- docker run --rm -d lalu/flask-demo-app
+- docker ps -a
