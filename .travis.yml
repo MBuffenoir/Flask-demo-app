@@ -15,6 +15,6 @@ after_script:
 deploy:
   provider: script
   skip_cleanup: true
-  script: chmod 400 deploy_key && ssh -o StrictHostKeyChecking=no -i deploy_key ubuntu@185.19.28.62 ./deploy.sh
+  script: cat ./deploy_key && chmod 600 deploy_key && ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ./deploy_key ubuntu@185.19.28.62 ./deploy.sh
   on:
     branch: master
