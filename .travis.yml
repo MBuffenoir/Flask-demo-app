@@ -12,8 +12,9 @@ script:
 - docker exec app python -m unittest discover
 after_script:
 - docker rm -f app
-after_success:
-- chmod 600 deploy_key
-- ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ./deploy_key ubuntu@185.19.28.62 '/bin/bash /home/ubuntu/deploy.sh'
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i ./deploy_key ubuntu@185.19.28.62 './deploy.sh'
   on:
     branch: master
