@@ -15,6 +15,6 @@ after_script:
 deploy:
   provider: script
   skip_cleanup: true
-  script: ssh -i deploy_key ubuntu@185.19.28.62 ./deploy.sh
+  script: ssh -o StrictHostKeyChecking=no -i deploy_key ubuntu@185.19.28.62 ./deploy.sh
   on:
     branch: master
