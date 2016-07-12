@@ -1,17 +1,20 @@
 sudo: required
-
 language: python
-
 services:
-  - docker
-
+- docker
 before_install:
+- openssl aes-256-cbc -K $encrypted_ced0c438de4d_key -iv $encrypted_ced0c438de4d_iv
+  -in deploy_key.enc -out ./deploy_key -d
 - docker build -t flask-demo-app .
 - docker run -d --name app flask-demo-app
 - docker ps -a
-
 script:
 - docker exec app python -m unittest discover
-
 after_script:
 - docker rm -f app
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: ssh -i deploy_key ubuntu@185.19.28.62 ./deploy.sh
+  on:
+    branch: master
