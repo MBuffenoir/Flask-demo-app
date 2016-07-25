@@ -3,6 +3,7 @@ language: python
 services:
 - docker
 before_install:
+- docker login --email=$DOCKER_HUB_EMAIL --username=$DOCKER_HUB_USERNAME --password=$DOCKER_HUB_PASSWORD
 - openssl aes-256-cbc -K $encrypted_ced0c438de4d_key -iv $encrypted_ced0c438de4d_iv
   -in deploy_key.enc -out ./deploy_key -d
 - docker build -t flask-demo-app .
@@ -11,10 +12,17 @@ before_install:
 script:
 - docker exec app python -m unittest discover
 after_script:
+- docker push $DOCKER_USERNAME/flask-demo-app
 - docker rm -f app
 deploy:
   provider: script
   skip_cleanup: true
-  script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i ./deploy_key ubuntu@185.19.28.62 './deploy.sh'
+  script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i ./deploy_key
+    ubuntu@185.19.28.62 './deploy.sh'
   on:
     branch: master
+env:
+  global:
+  - secure: DCNxizK/1GxhkKxAF+n672uObT+xktPKZF+pWujD9h3QxLNVOoEDxk2i7m75FO/WLJamrgB/b1Ywb8XogCs0yG5KsUeJdmf2k5vTuXi5lqWisTx6rICsCh5NJZmk0Lt/yGSgIxB0VE3g8fOLrmtSbRB8EONRQR3xboxf+B1PphIBI/MLam8V3Um+teftfblXXJO/iRn3hkgWnxoUY4EWoFwwq7staxpQaoheOrtIDfK+6j6M6Om12N06aWgPDvhV8i6l6dU6tCSAc19YIqTKUGaD14sMl4QFfF1D2bLrebYfMDRTHs71FASwBJfgXny70NiioBP81wYDdN6AjM8j0Y6e8QeWUqp8SCHItEEFy7eQfRzdprCBLK+kkNVMuhUBid3FeC4PBwj5eiMToChYMT7PRWnDBOdC+rBFMv05ahekPD5h/iTMI1DNTTgFqG1YKAWR0I8DGnLJ79JqhvuhZSlgDSebRkwImSeobCr7etwc3AzGbX8e2a6M1hTqcVLjvq3pvnutqxAyNlUziHjw/s/t7CRf/zFQcRwD01ENVUdzWQndhIHW6wxmY64j49XGUs5XomcakTtwzZaVFDvP60ubrYFfIwXX8ic/5VF80W5EGhRZMU59Q9bfsnaqytDsjjcE9rWc3MZ43pdaKJaznkd7jZHBs8P7KsLHxFJpygQ=
+  - secure: cnpkOl90jkQUtJFLaLXxSX5puOGZEr+VB+WZwmvHIYM1Q4sK9V423Z4urBQlp22dmRVJ1oP2r4wJBaHLaza40BZjAzpJfMc7KRRyOg1ekB9IhAbBUVF2lc+lV4HMaX8Lbkchms/NF1JF3rcp5K9A1GjrA77i2KtaY7SdZOZoNAbVBpd7+iHALgXlbZuXNcXO4EcRxzUOZH74UApP4mjdPbnJtAwrerO4BmgMHvvy65KktK5kSu/oADfIq6nEkvo6Uz2/OnxTarruLRRIgeo3vC4SHVaHKjKQYELKXI8s3bqMDJUYVwlk+UwGzGCCU7Q1C6FKeDiO9tgiFEdWRw1aCwCEDYxLddvh3V+9HkrOfTmaOtalUzvB9USKz8/E+EkyvwaDai6GwLPBMasKDcJgLPdh0QCy+QSwlMnWZi18z1RqMpe48nhMXoAh4JykvbU4I8uLWKKFO9vq+8d5+2cYkio2ggxcT1oowz0xtvBnhN2NvnPooa17EsO8SebDmxwOQnpOtfk0cvoJWbxQFc0TfALFHj10a0kXMNdUqrg+wom6MAOl2kLv6m5l7C7s/9nuKaEOLMxT6YblVmiTeN1/h1YDDNS/EtHkcBEn08EOsj3WfHDNOmW8mHNAdO9LLMU4BrBp2ctBb9sSObKs1pM1yAfBYHjr6QnYuVZBtAfdHKc=
+  - secure: wy5+mu0+gtTY+HST8rMYePdE5At/yQWLgayg0Aa42YKbY4ulTpnpBe6Xbqt0pu5xpuWXrLG7h+GeI+zpi2p7m6WDJ6WDjKdAnn420TaUSsk7IbQhgkp+/KjBZpbo+NhMOppz5DQG/kKPakTD4ET1oKT+4AxDdCOGLnEKFaekjympaao36fTzkMAOonH2BZSdH5jnZP9V0lnrSy8o2eCxr1otOazJUWmT0FmsJ4v+E4F61TkAWTy8Il110JkKSWXGDuJNhzPQgtIok+31MdvI1CLd7aQ3BIqyuNSEFPCk1cWfzHk0thNhOMHkG8Vs40FSLDBuFw9eGq85OHLsnxVSDKkLPL1vmnT5y6x9BOtcE424BO1wT7oL8lmKQmVrJcgOVlMCyWx9o0tAUfW61wcAy+h5RyoyptPMfwqGdDbBCESw1wq9LWkCg93jgYF+qnh5vilgmbP857pcD55VKmnzqo6LSxggq00JAOVJr237/TGzXNGR0U+WtxQjnP49mm5EHH56oNN2dOglohSCAjLtaOjrjwdiRVc/6hxr2FoFme5YDYR572WBem9uaPme8QzdptKJHtsSXUCD+ek2cLKrJgDTNfpY1uVZTK5HKt20yLOXg3i94mVTfzmsB2lnrfNOtig3i49M8R+A30kSTlZ0omRm/G85bvReR34qCm3MqvQ=
