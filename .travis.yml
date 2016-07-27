@@ -13,8 +13,8 @@ script:
 - docker exec app python -m unittest discover
 after_script:
 - export
-- docker tag flask-demo-app $DOCKER_USERNAME/flask-demo-app:production
-- docker push $DOCKER_USERNAME/flask-demo-app:production
+- docker tag flask-demo-app:latest flask-demo-app:production
+- docker push flask-demo-app:production
 - docker rm -f app
 deploy:
   provider: script
