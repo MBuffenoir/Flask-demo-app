@@ -1,6 +1,0 @@
-version: '2'
-services:
-  app:
-    image: lalu/flask-demo-app:production
-    ports: 
-      - 80:80
