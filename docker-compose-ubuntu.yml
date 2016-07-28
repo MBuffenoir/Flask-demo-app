@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  proxy:
+    image: nginx
+    ports: 
+      - 80:80
+      - 443:443
+    volumes:
+      - /home/ubuntu/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt
+
+  app:
+    image: lalu/flask-demo-app:latest
+
+# Generate some certificates with letsencrypt:
+# sudo docker run -it --rm -p 443:443 -p 80:80 --name certbot             -v "/etc/letsencrypt:/etc/letsencrypt"             -v "/var/lib/letsencrypt:/var/lib/letsencrypt"             quay.io/letsencrypt/letsencrypt:latest certonly --standalone --email mathieu@buffenoir.tech -d demo-flask.buffenoir.tech
+# or --renew-by-default (every 3 months) -> Cron
