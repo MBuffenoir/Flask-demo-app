@@ -14,7 +14,7 @@ script:
 after_script:
 - export
 - docker tag flask-demo-app:latest flask-demo-app:production
-- docker push flask-demo-app:production
+- docker push $DOCKER_USERNAME/flask-demo-app:production
 - docker rm -f app
 deploy:
   provider: script
